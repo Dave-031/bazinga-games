@@ -138,7 +138,7 @@
       const el = document.querySelector('#bzg-version');
       const ts = Date.now();
       try {
-        const r = await fetch(`https://raw.githubusercontent.com/Dave-031/bazinga-games/main/version.json?t=${ts}`);
+        const r = await fetch(`https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games@main/version.json?t=${ts}`);
         const data = await r.json();
         el.textContent = `Version: ${data.version}`;
       } catch {
@@ -149,10 +149,10 @@
     // Fetch and render games
     (async () => {
       const ts = () => Date.now();
-      const JSON_URL = `https://raw.githubusercontent.com/Dave-031/bazinga-games/main/single-html/zones.json?t=${ts()}`;
-      const COVER_URL = 'https://raw.githubusercontent.com/Dave-031/covers/main';
-      const HTML_URL = 'https://raw.githubusercontent.com/Dave-031/bazinga-games/main/single-html/';
-      const FALLBACK = 'https://raw.githubusercontent.com/Dave-031/files/main';
+      const JSON_URL = `https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games@main/single-html/zones.json?t=${ts()}`;
+      const COVER_URL = 'https://cdn.jsdelivr.net/gh/Dave-031/covers@main/';
+      const HTML_URL = 'https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games@main/single-html/';
+      const FALLBACK = 'https://cdn.jsdelivr.net/gh/Dave-031/files@main';
 
       const grid = document.querySelector('#bzg-grid');
       const input = document.querySelector('#bzg-search');
