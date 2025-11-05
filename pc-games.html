@@ -91,7 +91,7 @@
     <h1 class="page-title">PC Games</h1>
     <h2>Sorry the PC Games are down until I find a new way to host them check back soon.</h2>
     <!--
-    <h2>⚠️THESE GAMES DONT WORK ON CHROMEBOOKS ONLY THE DESKTOPS⚠️ - <a style="color:white;" href="https://raw.githubusercontent.com/Calvin99Cooler/bazinga-games/main/instructions.txt" target="_blank">Click here if you're confused</a></h2>-->
+    <h2>⚠️THESE GAMES DONT WORK ON CHROMEBOOKS ONLY THE DESKTOPS⚠️ - <a style="color:white;" href="https://raw.githubusercontent.com/Dave-031/bazinga-games/main/instructions.txt" target="_blank">Click here if you're confused</a></h2>-->
   </div>
   <div style="display:none;" class="games-grid" id="gamesGrid">
     <div class="no-results">Loading PC games...</div>
@@ -101,7 +101,7 @@
   const el = document.getElementById('bzg-version');
   const ts = Date.now();
   try {
-    const r = await fetch(`https://raw.githubusercontent.com/Calvin99Cooler/bazinga-games/main/version.json?t=${ts}`);
+    const r = await fetch(`https://raw.githubusercontent.com/Dave-031/bazinga-games/main/version.json?t=${ts}`);
     const data = await r.json();
     el.textContent = `Version: ${data.version}`;
   } catch {
@@ -115,7 +115,7 @@
       const noRes = grid.querySelector('.no-results');
       const ts = Date.now();
 
-      fetch(`https://raw.githubusercontent.com/Calvin99Cooler/pc-games/main/pc-games.json?t=${ts}`)
+      fetch(`https://raw.githubusercontent.com/Dave-031/pc-games/main/pc-games.json?t=${ts}`)
         .then(r => r.json())
         .then(games => {
           if (!games.length) {
