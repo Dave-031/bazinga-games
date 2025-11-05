@@ -45,7 +45,7 @@
 <script>
 (() => {
   const el = document.getElementById('version-indicator');
-  fetch(`https://raw.githubusercontent.com/Calvin99Cooler/bazinga-games/main/version.json?t=${Date.now()}`)
+  fetch(`https://raw.githubusercontent.com/Dave-031/bazinga-games/main/version.json?t=${Date.now()}`)
     .then(r => r.json())
     .then(data => {
       el.textContent = `Version: ${data.version}`;
