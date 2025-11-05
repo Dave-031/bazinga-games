@@ -101,7 +101,7 @@
   const el = document.getElementById('bzg-version');
   const ts = Date.now();
   try {
-    const r = await fetch(`https://raw.githubusercontent.com/Dave-031/bazinga-games/main/version.json?t=${ts}`);
+    const r = await fetch(`https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games@main/version.json?t=${ts}`);
     const data = await r.json();
     el.textContent = `Version: ${data.version}`;
   } catch {
@@ -115,7 +115,7 @@
       const noRes = grid.querySelector('.no-results');
       const ts = Date.now();
 
-      fetch(`https://raw.githubusercontent.com/Dave-031/pc-games/main/pc-games.json?t=${ts}`)
+      fetch(`https://cdn.jsdelivr.net/gh/Dave-031/pc-games@main/pc-games.json?t=${ts}`)
         .then(r => r.json())
         .then(games => {
           if (!games.length) {
