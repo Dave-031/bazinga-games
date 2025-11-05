@@ -1,0 +1,8 @@
+These are the instructions for the PC Games
+1. Click whatever game you want to play from the list
+2. The download page will open in a new tab click the download button on the right
+3. The game will begin downloading wait for it to finish!
+4. Once the game is done downloading right click the ZIP file and click "Extract All" in the menu
+5. The game should begin unziping WAIT FOR IT TO FINISH DOING THAT!
+6. Once its unzipped go inside the folder and find the game name exe file like this "GAMENAME.exe"
+7. Once you find the file that is the name of the game just simply open it and you can play

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Scrap Metal 3 Infernal Trap</title>
+
+    <!-- Base URL for all assets -->
+    <base href="https://cdn.jsdelivr.net/gh/Calvin99Cooler/bazinga-games-assets@main/scrapmetal3/">
+
+    <!-- Icons -->
+    <link rel="shortcut icon" href="img/utka.ico">
+    <link rel="icon" href="img/utka.ico">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="zombies11.css">
+
+    <!-- Unity scripts -->
+    <script src="utkaUnityProgress.js"></script>
+    <script src="scrapUnityLoader.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        // Instantiate the Unity instance once everything is ready
+        var unityInstance = UnityLoader.instantiate(
+          "unityContainer",
+          "https://raw.githubusercontent.com/Calvin99Cooler/bazinga-games-assets/refs/heads/main/scrapmetal3/ScrapMetal3.json",
+          { onProgress: UnityProgress }
+        );
+        window.unityInstance = unityInstance;
+      });
+    </script>
+  </head>
+
+  <body>
+    <div class="webgl-content">
+      <div id="unityContainer" style="width: 960px; height: 100%"></div>
+      <div class="footer">
+        <div class="webgl-logo"></div>
+        <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
+        <div class="title">Scrap Metal 3 Infernal Trap</div>
+      </div>
+    </div>
+
+    <!-- Optional site script -->
+    <script src="js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<title>Get Yoked</title>
+<base href="https://cdn.jsdelivr.net/gh/Calvin99Cooler/bazinga-games-assets@main/get-yoked/">
+<link rel="shortcut icon" href="TemplateData/favicon.ico">
+<link rel="stylesheet" href="TemplateData/style.css">
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family: sans-serif;
+  }
+
+  #unity-container {
+    width: 960px;
+    height: 600px;
+    margin: 20px auto;
+    position: relative;
+    background: #000;
+    border: 1px solid #222;
+  }
+
+  #unity-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #000;
+    position: relative;
+    z-index: 2; /* initial z-index during loading */
+  }
+
+  #unity-loading-bar {
+    width: 100%;
+    height: 4px;
+    background: #222;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+  }
+
+  #unity-progress-bar-full {
+    width: 0%;
+    height: 100%;
+    background: #4caf50;
+    transition: width 0.2s;
+  }
+
+  /* Loading overlay */
+  #loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    z-index: 4; /* on top during loading */
+  }
+
+  #loading-overlay span {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #aaa;
+  }
+
+  /* Fullscreen button below canvas */
+  #fullscreen-btn {
+    display: block;
+    margin: 10px auto 0 auto;
+    padding: 5px 15px;
+    background: #222;
+    color: #fff;
+    border: 1px solid #4caf50;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  #fullscreen-btn:hover {
+    background: #4caf50;
+    color: #000;
+  }
+</style>
+</head>
+<body>
+<div id="unity-container">
+  <canvas id="unity-canvas" tabindex="-1"></canvas>
+  <div id="unity-loading-bar">
+    <div id="unity-progress-bar-full"></div>
+  </div>
+  <div id="loading-overlay">
+    Loading GET YOKED...
+    <span>Please wait while the game loads</span>
+  </div>
+</div>
+
+<button id="fullscreen-btn">Fullscreen</button>
+
+<script>
+const canvas = document.getElementById("unity-canvas");
+const progressBarFull = document.getElementById("unity-progress-bar-full");
+const overlay = document.getElementById("loading-overlay");
+const fullscreenBtn = document.getElementById("fullscreen-btn");
+
+// Redirect Unity banner errors to console only
+function unityShowBanner(msg, type) {
+  if(type === "error") console.error("[Unity ERROR]", msg);
+  else console.warn("[Unity WARNING]", msg);
+}
+
+// Base URL for relative Unity assets
+const baseUrl = "https://cdn.jsdelivr.net/gh/Calvin99Cooler/bazinga-games-assets@main/get-yoked/";
+
+function resolveUrl(url) {
+  return /^(https?:)?\/\//i.test(url) ? url : baseUrl + url;
+}
+
+const config = {
+  dataUrl: resolveUrl("https://raw.githubusercontent.com/Calvin99Cooler/bazinga-games-assets/refs/heads/main/get-yoked/Build/Web.data"),
+  frameworkUrl: resolveUrl("Build/Web.framework.js"),
+  codeUrl: resolveUrl("https://raw.githubusercontent.com/Calvin99Cooler/bazinga-games-assets/refs/heads/main/get-yoked/Build/Web.wasm"),
+  streamingAssetsUrl: resolveUrl("StreamingAssets"),
+  companyName: "Barking Dogs",
+  productName: "GET YOKED",
+  productVersion: "0.3.3",
+  showBanner: unityShowBanner
+};
+
+// Canvas size for embedded mode
+canvas.style.width = "100%";
+canvas.style.height = "100%";
+
+// Show loading bar
+document.querySelector("#unity-loading-bar").style.display = "block";
+
+// Load Unity loader script
+const loaderScript = document.createElement("script");
+loaderScript.src = resolveUrl("Build/Web.loader.js");
+loaderScript.onload = () => {
+  createUnityInstance(canvas, config, (progress) => {
+    progressBarFull.style.width = `${100*progress}%`;
+  }).then((unityInstance) => {
+    // Fully hide overlay after game loads
+    overlay.style.display = "none";
+
+    // Increase canvas z-index to sit above everything else
+    canvas.style.zIndex = 10;
+
+    // Fullscreen button functionality
+    fullscreenBtn.onclick = () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        document.getElementById("unity-container").requestFullscreen();
+      }
+    };
+  }).catch((err) => console.error("[Unity Error]", err));
+};
+
+document.body.appendChild(loaderScript);
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+
+<!DOCTYPE HTML>
+<html style="height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+
+    <title>TankTrouble Multiplayer Tank Game</title>
+
+    <base href="https://cdn.jsdelivr.net/gh/Calvin99Cooler/bazinga-games-assets@main/tt2/">
+
+    <!-- Load jQuery from jsDelivr proxy -->
+    <script src="jquery-1.11.2.min.js"></script>
+
+    <script src="sdk.js"></script>
+    <script src="game.js"></script>
+
+    <style>
+        @font-face {
+            font-family: TankTrouble;
+            src: url('assets/fonts/TankTrouble.ttf');
+        }
+
+        #music {
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            cursor: pointer;
+        }
+
+        #music img {
+            display: none;
+        }
+
+        #music.on:not(:active) .on.standard,
+        #music.on:active .on.active,
+        #music.off:not(:active) .off.standard,
+        #music.off:active .off.active {
+            display: inherit;
+        }
+    </style>
+</head>
+<body style="height: 100%; margin: 0; background-color: white">
+    <div class="off" id="music">
+        <img class="on standard" src="assets/images/header/musicOn.png" srcset="assets/images/header/musicOn@2x.png 2x"/>
+        <img class="off standard" src="assets/images/header/musicOff.png" srcset="assets/images/header/musicOff@2x.png 2x"/>
+        <img class="on active" src="assets/images/header/musicOnActive.png" srcset="assets/images/header/musicOnActive@2x.png 2x"/>
+        <img class="off active" src="assets/images/header/musicOffActive.png" srcset="assets/images/header/musicOffActive@2x.png 2x"/>
+    </div>
+
+    <div id="game" style="height: 100%;"></div>
+
+    <script>
+        function g_url(url) { return url; }
+
+        $(function() {
+            AIs.init();
+
+            $("#music").on("mouseup", function(event) {
+                AudioManager.toggleMusic();
+                $(this).toggleClass("on off");
+            });
+
+            AudioManager.turnMusicOff();
+            AudioManager.turnSoundOn(AudioManager.VOLUME_SETTINGS.LOW);
+            QualityManager.setQuality(QualityManager.QUALITY_SETTINGS.HIGH);
+
+            if (devicePixelRatio > 1) {
+                UIConstants.scaleForHighDensity(devicePixelRatio);
+            }
+
+            PokiSDK.init().then(
+                function() {
+                    GameManager.initGame();
+                }
+            ).catch(
+                function() {
+                    GameManager.initGame();
+                }
+            );
+
+            'use strict';
+            (function Base64() {
+                // your existing Base64 logic …
+            })();
+        });
+    </script>
+</body>
+</html>

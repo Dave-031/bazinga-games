@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="HandheldFriendly" content="true">
+  <title>Throw a Potato</title>
+
+  <!-- EditMySite CSS -->
+  <link rel="stylesheet" href="https://124959627-307704633294331326.preview.editmysite.com/uploads/b/147739771-455646582524654724/files/style.css">
+
+  <style>
+    /* Full-screen reset */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
+    /* Canvas fills the entire screen */
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* Hide ad/floating buttons */
+    #button {
+      display: none !important;
+    }
+
+    /* Message for users without JavaScript */
+    #notSupportedWrap {
+      text-align: center;
+      padding: 20px;
+      color: #fff;
+      background: #333;
+    }
+    #notSupportedTitle {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .notSupportedMessage {
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div id="notSupportedWrap">
+      <h2 id="notSupportedTitle">This content requires JavaScript</h2>
+      <p class="notSupportedMessage">
+        Please enable JavaScript in your browser settings to view this content.
+      </p>
+    </div>
+  </noscript>
+
+  <!-- Main game canvas -->
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- EditMySite scripts -->
+  <script src="https://124959627-307704633294331326.preview.editmysite.com/uploads/b/147739771-455646582524654724/files/scripts/supportcheck.js"></script>
+  <script type="module" src="https://124959627-307704633294331326.preview.editmysite.com/uploads/b/147739771-455646582524654724/files/scripts/offlineclient.js"></script>
+  <script type="module" src="https://124959627-307704633294331326.preview.editmysite.com/uploads/b/147739771-455646582524654724/files/scripts/main.js"></script>
+  <script type="module" src="https://124959627-307704633294331326.preview.editmysite.com/uploads/b/147739771-455646582524654724/files/scripts/register-sw.js"></script>
+
+  <!-- External SDK required for the game -->
+  <script src="https://cdn.jsdelivr.net/gh/st39/sdk@main/api.js"></script>
+
+  <script>
+    // Make the canvas responsive
+    const canvas = document.getElementById('gameCanvas');
+    const context = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+  </script>
+</body>
+</html>

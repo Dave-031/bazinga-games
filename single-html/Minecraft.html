@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft</title>
+
+<style>
+  /* ========== Styles ========== */
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: Poppins, sans-serif; }
+  body { background: #000; color: #f5f5f5; min-height: 100vh; display: flex; flex-direction: column; padding: 1.5rem; line-height: 1.3; }
+  #mc-header { text-align: center; margin-bottom: 1.5rem; }
+  #mc-title { font-size: 2.5rem; font-weight: 700; background: linear-gradient(45deg, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
+  #mc-version { font-size: 2rem; font-weight: 500; margin-bottom: 0.5rem; }
+  #mc-search { width: 100%; max-width: 500px; margin: 0 auto 1.5rem; display: block; padding: 0.75rem 1rem; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 25px; background: rgba(255, 255, 255, 0.05); color: #fff; outline: 0; }
+  #mc-search:focus { border-color: rgba(255, 255, 255, 0.4); }
+  #mc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; flex: 1; }
+  .mc-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; overflow: hidden; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; height: 220px; display: flex; flex-direction: column; }
+  .mc-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+  .mc-img { width: 100%; height: 150px; object-fit: contain; background: #000; display: block; }
+  .mc-info { padding: 1rem 1rem 0.75rem 1rem; flex: 1; display: flex; align-items: flex-start; justify-content: center; flex-direction: column; }
+  .mc-name { font-size: clamp(1rem, 2vw, 1.2rem); font-weight: 500; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.3; text-align: center; padding-top: 0.5rem; width: 100%; }
+  #mc-empty { text-align: center; padding: 2rem; color: #888; display: none; }
+</style>
+
+</head>
+<body>
+
+<div id="mc-root">
+  <div id="mc-header">
+    <div id="mc-version">Version: …</div>
+    <h1 id="mc-title">Minecraft</h1>
+    <input id="mc-search" type="text" placeholder="Search versions…" autocomplete="off">
+  </div>
+  <div id="mc-grid"></div>
+  <div id="mc-empty">No games found</div>
+</div>
+
+<script>
+/* ========== Version Info ========== */
+(async () => {
+  const el = document.getElementById('mc-version');
+  try {
+    const r = await fetch(`https://raw.githubusercontent.com/Calvin99Cooler/bazinga-games/main/version.json?t=${Date.now()}`);
+    const data = await r.json();
+    el.textContent = `Version: ${data.version}`;
+  } catch {
+    el.textContent = 'Version: unavailable';
+  }
+})();
+
+/* ========== Game Loader ========== */
+(async () => {
+  const ts = () => Date.now();
+  const JSON_URL = `https://raw.githubusercontent.com/Calvin99Cooler/bazinga-games-assets/main/Minecraft/zones.json?t=${ts()}`;
+  const COVER_URL = 'https://raw.githubusercontent.com/Calvin99Cooler/bazinga-games-assets/main/Minecraft/covers';
+  const HTML_URL = 'https://raw.githubusercontent.com/Calvin99Cooler/bazinga-games-assets/main/Minecraft/single-html/';
+  const FALLBACK = 'https://raw.githubusercontent.com/Calvin99Cooler/files/main';
+
+  const grid  = document.getElementById('mc-grid');
+  const input = document.getElementById('mc-search');
+  const empty = document.getElementById('mc-empty');
+
+  const zones = await fetch(JSON_URL)
+    .then(r => r.json())
+    .then(list => list.map(z => ({
+      name: z.name,
+      cover: z.cover ?
+        (z.cover.includes('{COVER_URL}') ? z.cover.replace('{COVER_URL}', COVER_URL) :
+         z.cover.startsWith('http') ? z.cover :
+         `${FALLBACK}/${encodeURIComponent(z.name.trim())}/${z.cover}`) + `?t=${ts()}` : '',
+      url: `${HTML_URL}${encodeURIComponent(z.name)}.html?t=${ts()}`
+    })))
+    .catch(() => []);
+
+  const makeCard = z => {
+    const card = document.createElement('div');
+    card.className = 'mc-card';
+    card.innerHTML = `
+      <img class="mc-img" alt="${z.name}"
+           src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+           data-src="${z.cover}">
+      <div class="mc-info"><div class="mc-name">${z.name}</div></div>`;
+    card.onclick = () =>
+      fetch(z.url).then(r => r.text())
+        .then(html => {
+          const t = window.open('about:blank', '_blank');
+          t.document.write(html); t.document.close();
+        })
+        .catch(() => alert('Could not load game'));
+    return card;
+  };
+
+  const render = arr => {
+    grid.innerHTML = '';
+    if (!arr.length) { empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    arr.forEach(z => grid.appendChild(makeCard(z)));
+    /* lazy images */
+    const imgs = grid.querySelectorAll('img[data-src]');
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((es, o) => es.forEach(e => {
+        if (e.isIntersecting) {
+          const i = e.target; i.src = i.dataset.src; delete i.dataset.src; o.unobserve(i);
+        }
+      }));
+      imgs.forEach(i => io.observe(i));
+    } else imgs.forEach(i => i.src = i.dataset.src);
+  };
+
+  render(zones);
+
+  let t;
+  input.oninput = e => {
+    clearTimeout(t);
+    t = setTimeout(() => {
+      const term = e.target.value.trim().toLowerCase();
+      render(term ? zones.filter(z => z.name.toLowerCase().includes(term)) : zones);
+    }, 200);
+  };
+})();
+</script>
+
+</body>
+</html>

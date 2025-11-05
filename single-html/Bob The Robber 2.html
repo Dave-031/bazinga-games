@@ -1,0 +1,128 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Bob The Robber 2</title>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: indigo;
+            overflow: hidden;
+        }
+
+        #inner {
+            margin: 0 auto;
+            width: 123.07vh;
+            height: 100vh;
+            position: relative;
+            box-shadow: 0 0 5vmin 1vmin black;
+        }
+
+        #spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin: auto;
+            height: 10vh;
+            width: 10vh;
+            border-radius: 50%;
+            border-style: solid;
+            border-width: 2vh;
+            border-color: white;
+            box-shadow: 1vh 1vh 1vh rgba(0, 0, 0, 0.4);
+            animation: spinner 1s linear forwards infinite;
+        }
+
+        @keyframes spinner {
+            0% {
+                border-left-color: green;
+                border-top-color: white;
+                border-right-color: white;
+                border-bottom-color: lime;
+            }
+
+            25% {
+                border-left-color: lime;
+                border-top-color: green;
+                border-right-color: white;
+                border-bottom-color: white;
+            }
+
+            50% {
+                border-left-color: white;
+                border-top-color: lime;
+                border-right-color: green;
+                border-bottom-color: white;
+            }
+
+            75% {
+                border-left-color: white;
+                border-top-color: white;
+                border-right-color: lime;
+                border-bottom-color: green;
+            }
+
+            100% {
+                border-left-color: green;
+                border-top-color: white;
+                border-right-color: white;
+                border-bottom-color: lime;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="spinner"></div>
+    <div id="inner"></div>
+
+    <!-- Game Script -->
+    <script src="https://padlet-uploads-usc1.storage.googleapis.com/4541232040/f86aeedbaac4b260fa39c4a5962164dc/bobtherobber2.js" 
+        onload="setTimeout(function(){spinner.style.display='none'},200)">
+    </script>
+
+    <script>
+        // Move the game canvas into #inner once loaded
+        var intervalID = setInterval(function() {
+            if (document.getElementById('stage0') !== null) {
+                document.getElementById('stage0').firstChild.style.backgroundColor = "rgb(0, 0, 0)";
+                var node = document.getElementById("stage0");
+                if (node.parentNode) node.parentNode.removeChild(node);
+                document.getElementById('inner').appendChild(node);
+                clearInterval(intervalID);
+            }
+        }, 500);
+
+        // Optional features
+        const doResize = true;
+        const focusWindow = true;
+        const timedReloadEnabled = false;
+        const auxSetting = false;
+
+        // Resize the game canvas to fit screen
+        function resizeGameCanvas() {
+            const canvas = document.querySelector("canvas");
+            if (canvas) {
+                canvas.style.maxWidth = "100vw";
+                canvas.style.maxHeight = "100vh";
+            }
+        }
+
+        if (doResize) {
+            setInterval(resizeGameCanvas, 1500);
+        }
+
+        // Keep window focused (optional)
+        if (focusWindow) {
+            window.addEventListener('blur', () => window.focus());
+        }
+    </script>
+
+</body>
+</html>
