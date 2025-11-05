@@ -134,7 +134,7 @@
       search.addEventListener('input', filterLogs);
 
       const ts = Date.now();
-      fetch(`https://raw.githubusercontent.com/Dave-031/bazinga-games/main/changelogs/changelogs.json?t=${ts}`)
+      fetch(`https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games@main/changelogs/changelogs.json?t=${ts}`)
         .then(r => r.json())
         .then(data => {
           data.forEach(log => {
@@ -153,7 +153,7 @@
         })
         .catch(() => grid.innerHTML = '<p>Unable to load changelogs.</p>');
 
-     fetch(`https://raw.githubusercontent.com/Dave-031/bazinga-games/main/version.json?t=${ts}`)
+     fetch(`https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games@main/version.json?t=${ts}`)
     .then(r => r.json())
     .then(data => {
       document.getElementById('version-indicator').textContent = `Version: ${data.version}`;
