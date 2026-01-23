@@ -246,28 +246,28 @@
     "authorLink": ""
   },
   {
-    "name": "Five Nights at Freddy s",
+    "name": "Five Nights at Freddy s_",
     "cover": "{COVER_URL}/38.png",
     "url": "{HTML_URL}/38.html",
     "author": "",
     "authorLink": ""
   },
   {
-    "name": "Five Nights at Freddy s 2",
+    "name": "Five Nights at Freddy s_ 2",
     "cover": "{COVER_URL}/39.png",
     "url": "{HTML_URL}/39.html",
     "author": "",
     "authorLink": ""
   },
   {
-    "name": "Five Nights at Freddy s 3",
+    "name": "Five Nights at Freddy s_ 3",
     "cover": "{COVER_URL}/40.png",
     "url": "{HTML_URL}/40.html",
     "author": "",
     "authorLink": ""
   },
   {
-    "name": "Five Nights at Freddy s 4",
+    "name": "Five Nights at Freddy s_ 4",
     "cover": "{COVER_URL}/41.png",
     "url": "{HTML_URL}/41.html",
     "author": "",
@@ -1038,7 +1038,7 @@
     "authorLink": "https://github.com/landgreen/n-gon"
   },
   {
-    "name": "Five Nights at Freddy s: Sister Location",
+    "name": "Five Nights at Freddy s_: Sister Location",
     "cover": "{COVER_URL}/185.png",
     "url": "{HTML_URL}/185.html",
     "author": "Scott Cawthon",
@@ -1066,21 +1066,21 @@
     "authorLink": "https://www.ciorbynstudio.com"
   },
   {
-    "name": "Five Nights at Freddy s: World",
+    "name": "Five Nights at Freddy s_: World",
     "cover": "{COVER_URL}/190.png",
     "url": "{HTML_URL}/190.html",
     "author": "Scott Cawthon",
     "authorLink": "https://scottgames.com"
   },
   {
-    "name": "Five Nights at Freddy s: Pizza Simulator",
+    "name": "Five Nights at Freddy s_: Pizza Simulator",
     "cover": "{COVER_URL}/191.png",
     "url": "{HTML_URL}/191.html",
     "author": "Scott Cawthon",
     "authorLink": "https://scottgames.com"
   },
   {
-    "name": "Five Nights at Freddy s: Ultimate Custom Night",
+    "name": "Five Nights at Freddy s_: Ultimate Custom Night",
     "cover": "{COVER_URL}/192.png",
     "url": "{HTML_URL}/192.html",
     "author": "Scott Cawthon",
@@ -2629,7 +2629,7 @@
     "featured": true
   },
   {
-    "name": "Five Nights at Freddy s 4: Halloween",
+    "name": "Five Nights at Freddy s_ 4: Halloween",
     "cover": "{COVER_URL}/428.png",
     "url": "{HTML_URL}/428.html",
     "author": "Scott Cawthon",
