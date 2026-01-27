@@ -10,7 +10,7 @@
 <script>
 (function () {
   // Absolute base URL to your assets folder (must end with /)
-  const ASSET_BASE = "https://raw.githubusercontent.com/Calvin99Cooler/bazinga-games-assets/main/leveldevil/";
+  const ASSET_BASE = "https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games-assets@main/leveldevil";
 
   // Helper: decide whether to rewrite a url
   function shouldRewrite(url) {
@@ -133,8 +133,8 @@
 </script>
 
   <!-- ✅ Load Poki SDK and game script from GitHub CDN -->
-  <script src="https://cdn.jsdelivr.net/gh/Calvin99Cooler/bazinga-games-assets@main/leveldevil/poki-sdk.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/gh/Calvin99Cooler/bazinga-games-assets@main/leveldevil/level-devil.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games-assets@cb91d3f451123fdf650a30d59c2602eaacb63b30/leveldevil/poki-sdk.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games-assets@main/leveldevil/level-devil.js" defer></script>
 
   <script>
     window.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
@@ -145,7 +145,7 @@
     }
 
     // ✅ Define the absolute asset path so the game fetches from GitHub
-    window.ASSET_BASE_URL = "https://raw.githubusercontent.com/Calvin99Cooler/bazinga-games-assets/main/leveldevil/";
+    window.ASSET_BASE_URL = "https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games-assets@main/leveldevil/";
 
     // Hook into lime/app preloader to rewrite paths before loading
     const originalCreateElement = document.createElement.bind(document);
