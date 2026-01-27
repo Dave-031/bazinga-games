@@ -45,6 +45,17 @@
 		}
 	</script>
 
+	<script>
+    // Force all images to attempt CORS loading
+    	(function() {
+        	var originalImage = window.Image;
+        	window.Image = function() {
+            	var img = new originalImage();
+            	img.crossOrigin = "Anonymous";
+            	return img;
+        	};
+    	})();
+	</script>
 
     <script src="https://cdn.jsdelivr.net/gh/astraaxd/FNAD_Five_Nights_At_Diddys@main/src/Runtime.js"></script>
 
