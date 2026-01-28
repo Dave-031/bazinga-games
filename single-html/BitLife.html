@@ -10,7 +10,10 @@
     <script src="Build/UnityLoader.js"></script>
     <script type="application/javascript" src="/js/main.js"></script>
     <script>
-      var unityInstance = UnityLoader.instantiate("gameContainer", "Build/BitLife.json", {onProgress: UnityProgress});
+      var unityInstance = UnityLoader.instantiate("gameContainer", "Build/BitLife.json", {
+		onProgress: UnityProgress,
+		dataCaching: false
+	  });
     </script>
   </head>
   <body>
@@ -20,4 +23,5 @@
     </div>
   </body>
 </html>
+
 
