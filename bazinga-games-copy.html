@@ -42,15 +42,15 @@
       </section>
       <section id="view-unblock" class="view-section">
         <center>
-          <h1 class="widget-title">Unblockers <span id="unblock-ver" class="widget-version" style="font-size:1rem; margin-left:10px;">...</span>
+          <h1 class="widget-title">Bazinga links <span id="unblock-ver" class="widget-version" style="font-size:1rem; margin-left:10px;">...</span>
           </h1>
         </center>
         <br>
         <br>
         <div class="wrap">
           <div class="left">
-            <h2 style="font-size:1.8rem; background:linear-gradient(45deg,#fff,#aaa); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Unblocker link generator</h2>
-            <button id="gen-btn">Click me for a random working unblocker link</button>
+            <h2 style="font-size:1.8rem; background:linear-gradient(45deg,#fff,#aaa); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Bazinga link generator</h2>
+            <button id="gen-btn">Click me for a random working bazinga link</button>
             <div id="link-display" style="margin-top:1rem;"></div>
           </div>
           <div class="right">
@@ -58,7 +58,7 @@
               <div class="indicator"></div>
               <span id="site-count"></span>
             </div>
-            <div style="color:#ccc;">These links will be updated regularly.</div>
+            <div style="color:#ccc;">These links may be updated regularly.</div>
           </div>
         </div>
       </section>
@@ -139,16 +139,6 @@
               <span class="slider"></span>
             </label>
           </div>
-          <div class="setting-row">
-            <div>
-              <h3 style="margin:0;">Show Alert</h3>
-              <p style="margin:0; font-size:0.8rem; color:#aaa;">Enable/Disable the popup at the start (Not recommended)</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="popup-toggle">
-              <span class="slider"></span>
-            </label>
-          </div>
           
           <div class="setting-row" style="flex-direction:column; align-items:flex-start;">
             <div style="width:100%; margin-bottom:10px;">
@@ -184,7 +174,6 @@
 
   // Ensure defaults exist for properties that might be missing
   if (typeof settings.light === 'undefined') settings.light = false;
-  if (typeof settings.popup === 'undefined') settings.popup = true;
   if (typeof settings.rainbow === 'undefined') settings.rainbow = false;
   
   // Apply Defaults for Title/Icon if not set
@@ -209,7 +198,7 @@
     icon: 'https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games@dce6951141ee9b6036a32dbabf45fd30ba4917ca/icons/home.svg'
   }, {
     id: 'view-unblock',
-    name: 'Unblockers',
+    name: 'Bazinga-Links',
     icon: 'https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games@dce6951141ee9b6036a32dbabf45fd30ba4917ca/icons/unblock.svg'
   }, {
     id: 'view-games',
@@ -360,8 +349,8 @@
   }
 
   /* ===== UNBLOCKER LOGIC ===== */
-  const unblockLinks = ["https://whs-001.roig.com/", "https://freshhistory.drsanjay.com.au/", "https://whs-001.absl.ro/", "https://whs-001.littlejaco.com/", "https://whs-001.wroth.org/"];
-  document.getElementById('site-count').textContent = `${unblockLinks.length} Available Unblockers`;
+  const unblockLinks = ["https://bazinga.xo.je", "https://bazinga.totalh.net/", "https://bazinga.my-style.in/"];
+  document.getElementById('site-count').textContent = `${unblockLinks.length} Available Links`;
   document.getElementById('gen-btn').onclick = () => {
     const url = unblockLinks[Math.floor(Math.random() * unblockLinks.length)];
     document.getElementById('link-display').innerHTML = `<a href="${url}" target="_blank" style="color:#8aa0ff; background:rgba(255,255,255,.05); padding:0.5rem 1rem; border-radius:15px; border:1px solid rgba(255,255,255,.1); text-decoration:none;">${url}</a>`;
@@ -392,7 +381,6 @@
   /* ===== SETTINGS UI HANDLERS ===== */
   // Update inputs to match current settings
   document.getElementById('invert-toggle').checked = settings.light;
-  document.getElementById('popup-toggle').checked = settings.popup;
   document.getElementById('rainbow-toggle').checked = settings.rainbow;
   document.getElementById('tab-title-input').value = settings.tabName;
   document.getElementById('tab-icon-input').value = settings.tabIcon;
@@ -405,10 +393,6 @@
   document.getElementById('rainbow-toggle').onchange = (e) => {
     settings.rainbow = e.target.checked;
     document.body.classList.toggle('rainbow-active', settings.rainbow);
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  };
-  document.getElementById('popup-toggle').onchange = (e) => {
-    settings.popup = e.target.checked;
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   };
   
@@ -467,7 +451,7 @@
   /* ===== STARTUP ===== */
   window.onload = () => {
     if (settings.popup) {
-        alert("This site is a little broken right now im working on fixes so be patient.");
+   
     }
     initGlobal();
     initGames();

@@ -5,6 +5,15 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>BitLife - Life Simulator</title>
+	<script>
+  		// Disable IndexedDB completely
+ 		window.indexedDB = undefined;
+ 		window.IDBFactory = undefined;
+ 		window.IDBDatabase = undefined;
+ 		window.IDBObjectStore = undefined;
+  		window.IDBTransaction = undefined;
+		window.IDBKeyRange = undefined;
+	</script>
     <link rel="stylesheet" href="style.css" />
 	<script src="TemplateData/UnityProgress.js"></script>
     <script src="Build/UnityLoader.js"></script>
