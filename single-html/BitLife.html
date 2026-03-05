@@ -1,29 +1,61 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
-	<base href="https://cdn.jsdelivr.net/gh/Lugapps-games/bitlife@main/">
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>BitLife - Life Simulator</title>
-	<script>
-  		// Disable IndexedDB completely
- 		window.indexedDB = undefined;
- 		window.IDBFactory = undefined;
- 		window.IDBDatabase = undefined;
- 		window.IDBObjectStore = undefined;
-  		window.IDBTransaction = undefined;
-		window.IDBKeyRange = undefined;
-	</script>
+	<script async src="https://arc.io/widget.min.js#5XPTU21J"></script>
+	<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-W8NZMM8WN9"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W8NZMM8WN9');
+</script>
     <link rel="stylesheet" href="style.css" />
 	<script src="TemplateData/UnityProgress.js"></script>
-    <script src="Build/UnityLoader.js"></script>
-    <script type="application/javascript" src="/js/main.js"></script>
-    <script>
-      var unityInstance = UnityLoader.instantiate("gameContainer", "Build/BitLife.json", {
-		onProgress: UnityProgress,
-		dataCaching: false
-	  });
-    </script>
+<script src="Build/UnityLoader.js"></script>
+
+<!-- BLOCK REQUESTS -->
+<script>
+  const blockedUrls = [
+    "https://unitygame.herokuapp.com/bitlife/transfer_config.txt"
+  ];
+
+  const originalFetch = window.fetch;
+  window.fetch = function(url, options) {
+    if (blockedUrls.some(b => url.includes(b))) {
+      console.warn("Blocked fetch:", url);
+      return Promise.reject("Blocked by custom rule");
+    }
+    return originalFetch(url, options);
+  };
+
+  const originalOpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method, url) {
+    if (blockedUrls.some(b => url.includes(b))) {
+      console.warn("Blocked XHR:", url);
+      this.abort();
+      return;
+    }
+    return originalOpen.apply(this, arguments);
+  };
+</script>
+
+<!-- DISABLE UNITY ALERTS -->
+<script>
+  window.alert = function() {
+    console.warn("Alert suppressed:", arguments);
+  };
+</script>
+
+<script>
+  var unityInstance = UnityLoader.instantiate("gameContainer", "Build/BitLife.json", {onProgress: UnityProgress});
+</script>
+
+
   </head>
   <body>
   <div class="webgl-content">
@@ -32,7 +64,3 @@
     </div>
   </body>
 </html>
-
-
-
-
