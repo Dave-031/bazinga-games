@@ -3,7 +3,7 @@
 <head>
 	<meta charset='utf-8' />
 	<meta name='viewport' content='width=device-width, user-scalable=no' />
-	<base href="https://cdn.jsdelivr.net/gh/BlueGameMC/BrotatoWeb@main/index.html">
+	<base href="https://cdn.jsdelivr.net/gh/BlueGameMC/BrotatoWeb@main/">
 	<title>Brotato</title>
 	<style type='text/css'>
 
@@ -140,7 +140,14 @@
 	<script type='text/javascript' src='index.js'></script>
 	<script type='text/javascript'>//<![CDATA[
 
-		const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":51086080,"index.wasm":19721321},"focusCanvas":true,"gdnativeLibs":[]};
+		const GODOT_CONFIG = {
+			"args":[],
+			"canvasResizePolicy":2,
+			"executable":"index",
+			"experimentalVK":false,
+			"fileSizes": { "index.wasm": 19721321 },
+			"focusCanvas":true,"gdnativeLibs":[]
+			};
 		var engine = new Engine(GODOT_CONFIG);
 
 		(function() {
@@ -235,6 +242,49 @@
 							}
 						} else {
 							setStatusMode('indeterminate');
+
+				   			const pckParts = [
+        						'https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games-assets@main/brotato/index.pck.part1',
+        						'https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games-assets@main/brotato/index.pck.part2',
+        						'https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games-assets@main/brotato/index.pck.part3'
+							];
+							async function downloadAndStart() {
+        						try {
+           							 // 1. Download all parts
+          							  const buffers = await Promise.all(pckParts.map(async (url) => {
+               							 const response = await fetch(url);
+               							 if (!response.ok) throw new Error(`Failed to load ${url}`);
+             						     return response.arrayBuffer();
+       							     }));
+
+          						     // 2. Combine parts into one Uint8Array
+   							         const totalLength = buffers.reduce((acc, b) => acc + b.byteLength, 0);
+						             const combinedPck = new Uint8Array(totalLength);
+          						     let offset = 0;
+  						             buffers.forEach(b => {
+             					  	   combinedPck.set(new Uint8Array(b), offset);
+             						   offset += b.byteLength;
+     						         });
+
+          						     // 3. Start engine with the manual PCK data
+   							         await engine.startGame({
+    						            'pck': combinedPck, // Pass the joined data here
+    						            'onProgress': function (current, total) {
+                  					  	    if (total > 0) {
+                        						statusProgressInner.style.width = (current / total) * 100 + '%';
+                       							setStatusMode('progress');
+                   						    }
+             							}
+      						         });
+
+      						         setStatusMode('hidden');
+          						     initializing = false;
+    						     } catch (err) {
+          						     displayFailureNotice(err);
+ 						         }
+						    }
+
+  						    downloadAndStart();
 						}
 					},
 				}).then(() => {
@@ -246,3 +296,4 @@
 	//]]></script>
 </body>
 </html>
+
