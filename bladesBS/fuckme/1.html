@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xbox 360 Dashboard — Blades</title>
+<style>
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; width:100%; height:100%;
+    font-family:'Segoe UI', Arial, Helvetica, sans-serif;
+    background:#000; overflow:hidden;
+    -webkit-user-select:none; user-select:none;
+  }
+
+  .viewport{ position:relative; width:100vw; height:100vh; overflow:hidden; }
+
+  /* ---- Outer chrome frame ---- */
+  .chrome-frame{
+    position:absolute; inset:0; z-index:30;
+    pointer-events:none;
+  }
+  .chrome-frame::before, .chrome-frame::after{
+    content:""; position:absolute; top:0; bottom:0; width:6.5vw;
+    background: linear-gradient(180deg, #c8d4c8 0%, #9aaf9a 15%, #7a967a 30%, #6a866a 50%, #7a967a 70%, #9aaf9a 85%, #c8d4c8 100%);
+    box-shadow: inset 0 0 12px rgba(0,0,0,.25);
+  }
+  .chrome-frame::before{ left:0; border-radius:0 18px 18px 0; }
+  .chrome-frame::after{ right:0; border-radius:18px 0 0 18px; }
+
+  /* Inner chrome bevel lines */
+  .chrome-frame .bevel-l, .chrome-frame .bevel-r{
+    position:absolute; top:0; bottom:0; width:2px;
+    background: linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,.1), rgba(255,255,255,.6));
+    z-index:31;
+  }
+  .chrome-frame .bevel-l{ left:6.5vw; }
+  .chrome-frame .bevel-r{ right:6.5vw; }
+
+  /* ---- Side blade tabs (vertical text on chrome) ---- */
+  .side-tab{
+    position:absolute; top:50%; z-index:32;
+    writing-mode:vertical-rl; text-orientation:mixed;
+    font-size:clamp(.7rem, 1.2vw, 1rem);
+    font-weight:700; letter-spacing:3px; text-transform:lowercase;
+    color:#4a5a4a; text-shadow:0 1px 0 rgba(255,255,255,.4);
+    pointer-events:auto; cursor:pointer;
+    transition: color .25s, text-shadow .25s;
+    padding: 1.2vh .6vw;
+  }
+  .side-tab:hover{ color:#2a3a2a; text-shadow:0 1px 0 rgba(255,255,255,.7); }
+  .side-tab.active{
+    color:#fff;
+    text-shadow:0 0 10px rgba(255,255,255,.6), 0 2px 4px rgba(0,0,0,.4);
+  }
+  .side-tab.left{ left:1.6vw; transform:translateY(-50%); }
+  .side-tab.right{ right:1.6vw; transform:translateY(-50%) rotate(180deg); }
+
+  /* ---- Track / Pages ---- */
+  .track{
+    display:flex; height:100vh;
+    transition: transform .55s cubic-bezier(.22,.61,.32,1);
+    will-change: transform;
+    padding: 0 6.5vw;
+  }
+
+  .page{
+    width:87vw; height:100vh;
+    flex-shrink:0;
+    position:relative; display:flex; flex-direction:column;
+    overflow:hidden;
+    --c1:#0a1a0a; --c2:#4a8a2a;
+  }
+  .page .bg{
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse 90% 70% at 30% 30%, var(--c2) 0%, var(--c1) 55%, #050a05 100%);
+  }
+  .page .vignette{
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse 120% 100% at 50% 50%, transparent 50%, rgba(0,0,0,.5) 100%);
+  }
+  .page .folds{ position:absolute; inset:0; overflow:hidden; }
+  .page .fold{
+    position:absolute; border-radius:50%;
+    background:#fff; opacity:.08; filter:blur(50px);
+    mix-blend-mode:overlay;
+    animation: drift 14s ease-in-out infinite;
+  }
+  .page .fold.f1{ width:55vw; height:55vw; top:-16vw; left:-8vw; animation-delay:0s;}
+  .page .fold.f2{ width:40vw; height:40vw; bottom:-12vw; left:6vw; opacity:.06; animation-delay:-4s;}
+  .page .fold.f3{ width:34vw; height:34vw; top:16vh; right:-6vw; opacity:.05; animation-delay:-9s;}
+  @keyframes drift{
+    0%,100%{ transform:translateY(0) scale(1); }
+    50%{ transform:translateY(-2vh) scale(1.04); }
+  }
+  .page .sheen{
+    position:absolute; inset:0;
+    background: repeating-linear-gradient(112deg, rgba(255,255,255,.04) 0 1px, transparent 1px 80px);
+    mix-blend-mode:overlay;
+  }
+
+  /* ---- Content area ---- */
+  .content{
+    position:relative; z-index:3;
+    flex:1; display:flex; flex-direction:column;
+    padding: 6vh 3vw 0;
+    min-height:0;
+  }
+
+  /* Header */
+  .page-header{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    margin-bottom:2.4vh;
+  }
+  .page-title{
+    font-size:clamp(1.5rem, 2.8vw, 2.4rem);
+    font-weight:600; color:#fff;
+    text-shadow:0 3px 12px rgba(0,0,0,.5);
+    letter-spacing:.5px;
+  }
+  .console-badge{ display:flex; align-items:center; gap:10px; color:#fff; opacity:.95;}
+  .console-badge .orb{
+    width:28px; height:28px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #eafff0, #4fae5d 45%, #0c3d17 100%);
+    box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 0 0 1.5px rgba(255,255,255,.5);
+    position:relative; flex-shrink:0;
+  }
+  .console-badge .orb::after{
+    content:"✕"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:.6rem; font-weight:900; color:#0c3d17;
+  }
+  .console-badge .label{ font-weight:700; letter-spacing:1.2px; font-size:.9rem;}
+  .console-badge .label b{ font-weight:900;}
+
+  /* Body row */
+  .body-row{
+    flex:1; display:flex; gap:2.5vw;
+    min-height:0; padding-bottom:1.5vh;
+  }
+
+  /* ---- Menu column (left) ---- */
+  .menu-col{
+    flex:0 0 42%;
+    display:flex; flex-direction:column; gap:.35vh;
+    overflow-y:auto; padding-right:.8vw; min-height:0;
+  }
+  .menu-col::-webkit-scrollbar{ width:5px; }
+  .menu-col::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.25); border-radius:4px;}
+
+  /* 2000s glossy green menu item */
+  .menu-item{
+    display:flex; align-items:center; gap:.8vw;
+    padding: 1vh .9vw;
+    border-radius:8px; cursor:pointer; color:#fff;
+    position:relative; overflow:hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.02) 100%);
+    border: 1px solid rgba(255,255,255,.1);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 2px 6px rgba(0,0,0,.2);
+    transition: background .15s ease, transform .15s ease, box-shadow .15s ease;
+  }
+  .menu-item .icon{
+    width:2.4vw; height:2.4vw; min-width:34px; min-height:34px; max-width:48px; max-height:48px;
+    border-radius:6px; display:flex; align-items:center; justify-content:center;
+    font-size:1rem; font-weight:800; color:#fff;
+    background:rgba(0,0,0,.25);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+    flex-shrink:0;
+  }
+  .menu-item .txt{ display:flex; flex-direction:column; line-height:1.25; overflow:hidden; min-width:0;}
+  .menu-item .txt .title{ font-size:.95rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .menu-item .txt .sub{ font-size:.72rem; opacity:.7; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+
+  .menu-item:hover{
+    background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.05) 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 3px 8px rgba(0,0,0,.25);
+  }
+  .menu-item.active{
+    background: linear-gradient(180deg, rgba(255,255,255,.35) 0%, rgba(255,255,255,.12) 50%, rgba(255,255,255,.05) 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 4px 12px rgba(0,0,0,.3), 0 0 0 1px rgba(255,255,255,.3);
+    transform:translateX(4px);
+  }
+  .menu-item.active .icon{ background:rgba(0,0,0,.35); }
+  .menu-item.active::after{
+    content:""; position:absolute; top:0; left:-50%; width:30%; height:100%;
+    background:linear-gradient(115deg, transparent, rgba(255,255,255,.3), transparent);
+    animation: shine 2.5s ease-in-out infinite;
+  }
+  @keyframes shine{ 0%{left:-50%;} 55%,100%{left:120%;} }
+
+  /* Feature button (XBOX LIVE big button) */
+  .menu-item.feature-btn{
+    margin-top:.8vh; justify-content:center; text-align:center;
+    padding: 2vh .8vw;
+    border-radius:10px;
+    background:linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.45));
+    box-shadow:0 6px 18px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  .menu-item.feature-btn .title{ font-size:1.3rem; font-weight:900; letter-spacing:1.2px;}
+  .menu-item.feature-btn.active{ transform:translateX(0) scale(1.01); box-shadow:0 0 0 1.5px rgba(255,255,255,.5) inset, 0 10px 24px rgba(0,0,0,.45);}
+
+  /* Now playing bar */
+  .now-playing{
+    margin-top:1.2vh; padding:1vh .9vw; border-radius:8px;
+    background:rgba(0,0,0,.22); display:flex; align-items:center; gap:10px; color:#fff;
+    border: 1px solid rgba(255,255,255,.06);
+  }
+  .now-playing .thumb{ width:36px;height:36px;border-radius:5px; background:linear-gradient(135deg,#7c2a2a,#c0392b); display:flex;align-items:center;justify-content:center; font-size:.9rem; flex-shrink:0;}
+  .now-playing .info{ flex:1; min-width:0;}
+  .now-playing .info .t1{ font-size:.8rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .now-playing .info .t2{ font-size:.68rem; opacity:.72;}
+  .now-playing .bar{ height:3px; border-radius:2px; background:rgba(255,255,255,.18); margin-top:5px; overflow:hidden;}
+  .now-playing .bar i{ display:block; height:100%; width:38%; background:linear-gradient(90deg,#fff,#bbb);}
+  .play-line{ margin-top:.8vh; font-size:.78rem; color:#fff; opacity:.8; display:flex; align-items:center; gap:6px;}
+  .play-line::before{ content:"▶"; font-size:.6rem; }
+
+  /* ---- Detail column (right) ---- */
+  .detail-col{
+    flex:1; min-width:0; min-height:0;
+    display:flex; flex-direction:column; gap:1.4vh;
+    color:#fff; overflow:hidden;
+  }
+  .detail-media{
+    width:100%; max-width:480px; aspect-ratio:16/9;
+    border-radius:10px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.2rem; font-weight:900; color:rgba(255,255,255,.85);
+    box-shadow:0 8px 22px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .detail-title{ font-size:1.2rem; font-weight:700; text-shadow:0 2px 8px rgba(0,0,0,.4);}
+  .detail-body{ font-size:.88rem; line-height:1.55; opacity:.9; max-width:520px; overflow-y:auto;}
+  .detail-extra{ display:flex; gap:10px; align-items:center; margin-top:auto;}
+  .badge-teen{
+    width:42px;height:42px;border-radius:5px; background:#111; color:#fff;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-size:.52rem; font-weight:800; border:2px solid #fff; flex-shrink:0;
+  }
+  .badge-teen .big{ font-size:.95rem; }
+  .content-icon{
+    display:flex; align-items:center; gap:6px; background:rgba(255,255,255,.08);
+    padding:8px 12px; border-radius:6px; font-size:.7rem; font-weight:600;
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .song-row{ display:flex; align-items:center; gap:10px; padding:.8vh 0;}
+  .song-row .thumb{ width:40px;height:40px;border-radius:5px; background:linear-gradient(135deg,#7c2a2a,#c0392b); display:flex;align-items:center;justify-content:center; flex-shrink:0;}
+  .song-row .meta .t1{ font-size:.86rem; font-weight:700;}
+  .song-row .meta .t2{ font-size:.7rem; opacity:.68;}
+
+  /* Promo boxes */
+  .promo-box{
+    width:100%; max-width:480px; border-radius:10px; padding:2vh 1.2vw;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+    box-shadow:0 8px 22px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .promo-box.dim{ background:linear-gradient(160deg, rgba(255,255,255,.08), rgba(0,0,0,.2)); margin-top:.4vh;}
+  .promo-box.hot{ background:linear-gradient(135deg,#c9440b,#ffb400); margin-top:auto;}
+  .promo-box::after{
+    content:""; position:absolute; top:0; left:-50%; width:30%; height:100%;
+    background:linear-gradient(115deg, transparent, rgba(255,255,255,.35), transparent);
+    animation: shine 3s ease-in-out infinite;
+  }
+
+  /* Live logos */
+  .live-logo-big{ display:flex; align-items:baseline; gap:6px; }
+  .live-logo-big .x1{ color:#fff; font-size:1.4rem; font-weight:900; letter-spacing:1px;}
+  .live-logo-big .x2{ color:#8ee23a; font-size:1.4rem; font-weight:900; letter-spacing:1px; text-shadow:0 0 12px rgba(142,226,58,.5);}
+  .live-logo{ display:flex; align-items:baseline; gap:5px; font-size:1.7rem; font-weight:900;}
+  .live-logo .x1{ color:#fff;}
+  .live-logo .x2{ color:#8ee23a;}
+
+  /* ---- Footer ---- */
+  .page-footer{
+    position:relative; z-index:3;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 1.4vh 3vw;
+    background:rgba(0,0,0,.28);
+    border-top:1px solid rgba(255,255,255,.12);
+  }
+  .hint-group{ display:flex; gap:18px; align-items:center; flex-wrap:wrap;}
+  .hint{ display:flex; align-items:center; gap:6px; color:#fff; font-size:.82rem; opacity:.9;}
+  .btn-badge{
+    width:20px;height:20px;border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:.65rem; color:#111;
+    box-shadow:0 2px 5px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.5);
+    flex-shrink:0;
+  }
+  .btn-y{ background:#ffd400; }
+  .btn-x{ background:#1f8fff; color:#fff; }
+  .btn-b{ background:#e4342a; color:#fff; }
+  .btn-a{ background:#3fae49; color:#fff; }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 760px){
+    .chrome-frame::before, .chrome-frame::after{ width:10vw; }
+    .bevel-l{ left:10vw; }
+    .bevel-r{ right:10vw; }
+    .track{ padding: 0 10vw; }
+    .page{ width:80vw; }
+    .side-tab{ font-size:.6rem; letter-spacing:1px; }
+    .content{ padding-top:5vh; }
+    .body-row{ flex-direction:column; overflow-y:auto; }
+    .menu-col{ flex:0 0 auto; max-height:44vh; }
+    .detail-col{ min-height:28vh; }
+  }
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<div class="viewport" id="viewport">
+  <!-- Chrome frame with side tabs -->
+  <div class="chrome-frame">
+    <div class="bevel-l"></div>
+    <div class="bevel-r"></div>
+  </div>
+
+  <div class="track" id="track"></div>
+</div>
+
+<script>
+const BLADES = [
+  {
+    id:'marketplace', label:'marketplace', title:'Marketplace',
+    c1:'#2a0808', c2:'#cc5a1a',
+    menu:[
+      {icon:'🆕', title:'New Arrivals', sub:''},
+      {icon:'🎮', title:'Game Store', sub:''},
+      {icon:'🎬', title:'Video Store', sub:''},
+      {icon:'🎟️', title:'Redeem Code', sub:''},
+      {icon:'⬇️', title:'Active Downloads', sub:''},
+      {icon:'👤', title:'Account Management', sub:''},
+    ],
+    detailType:'live-banner',
+    footer:{ left:[{btn:'X', text:'Sign Out'}], right:[{btn:'A', text:'Select'}] }
+  },
+  {
+    id:'live', label:'xbox live', title:'Xbox LIVE',
+    c1:'#3a2800', c2:'#cc8a00',
+    menu:[
+      {icon:'👥', title:'Sign In', sub:'2 Profiles Found'},
+      {icon:'🌐', title:'Join Xbox LIVE', sub:''},
+      {icon:'🔍', title:'Recover Gamertag from Xbox LIVE', sub:''},
+      {icon:'', title:'XBOX LIVE', sub:'', feature:true},
+    ],
+    detailType:'live-info',
+    detailText:'Games. Tournaments. Entertainment. All the rewards. Endless possibilities. What are you waiting for?',
+    footer:{ left:[{icon:'🔊', text:'Open Tray'}], right:[{btn:'B', text:''},{btn:'A', text:'Select'}] }
+  },
+  {
+    id:'games', label:'games', title:'Select a Game',
+    c1:'#0a1a0a', c2:'#5a9a2a',
+    menu:[
+      {icon:'K', title:'Kameo: Elements of Power', sub:'Rare Ltd.',
+        detailTitle:'Kameo: Elements of Power',
+        detailText:'A shapeshifting elemental warrior sets out to reclaim her homeland, switching between ten distinct creature forms to battle a rising troll army across a colorful fantasy realm.'},
+      {icon:'P', title:'Project Gotham Racing 3', sub:'Bizarre',
+        detailTitle:'Project Gotham Racing 3',
+        detailText:'A high-speed street racing series that rewards stylish driving through its signature Kudos scoring system, set across real-world city circuits.'},
+      {icon:'C', title:'Call of Duty 2', sub:'Activision',
+        detailTitle:'Call of Duty 2',
+        detailText:'A cinematic World War II shooter that puts players on the front lines across several major campaigns of the European theater.'},
+      {icon:'K', title:"Peter Jackson's King Kong", sub:'Ubisoft',
+        detailTitle:"Peter Jackson's King Kong",
+        detailText:'A first-person survival adventure following the classic tale, alternating between a shipwrecked explorer and the mighty ape himself on Skull Island.'},
+      {icon:'N', title:'Need For Speed: Most Wanted', sub:'Electronic Arts',
+        detailTitle:'Need For Speed: Most Wanted',
+        detailText:'An open-world street racing game where outrunning the police and climbing a most-wanted blacklist of rival racers is the name of the game.'},
+      {icon:'A', title:'Amped 3', sub:'2k Sports',
+        detailTitle:'Amped 3',
+        detailText:'A freestyle snowboarding game with a huge open mountain to explore, filled with jumps, rails, and backcountry lines to trick out on.'},
+    ],
+    detailType:'game',
+    footer:{ left:[{btn:'Y', text:'Search'},{btn:'X', text:'Legal Information'}], right:[{btn:'B', text:''},{btn:'A', text:'Select'}] }
+  },
+  {
+    id:'media', label:'media', title:'Media',
+    c1:'#041e33', c2:'#2a8ac4',
+    menu:[
+      {icon:'🎵', title:'Music', sub:''},
+      {icon:'🖼️', title:'Pictures', sub:''},
+      {icon:'🎬', title:'Video', sub:''},
+      {icon:'📺', title:'Media Center Extender', sub:''},
+    ],
+    detailType:'media',
+    footer:{ left:[{btn:'Y', text:'Switch Profile'},{btn:'X', text:'Shutdown'}], right:[{btn:'B', text:'Back'},{btn:'A', text:'Select'}] }
+  },
+  {
+    id:'system', label:'system', title:'System',
+    c1:'#160a2e', c2:'#7a4ad4',
+    menu:[
+      {icon:'⚙️', title:'Console Settings', sub:''},
+      {icon:'👪', title:'Family Settings', sub:''},
+      {icon:'💾', title:'Memory', sub:''},
+      {icon:'🌐', title:'Network Settings', sub:''},
+      {icon:'🖥️', title:'Computers', sub:''},
+      {icon:'🔧', title:'Initial Setup', sub:''},
+    ],
+    detailType:'system',
+    footer:{ left:[{btn:'X', text:'Sign Out'}], right:[{btn:'A', text:'Select'}] }
+  },
+];
+
+let activeBlade = 2; // start on games (center blade)
+const activeMenu = {};
+BLADES.forEach((b,i)=> activeMenu[i] = 0);
+
+const track = document.getElementById('track');
+const viewport = document.getElementById('viewport');
+
+function iconStyle(seed){
+  let h = 0;
+  for(let i=0;i<seed.length;i++) h = (h*31 + seed.charCodeAt(i)) % 360;
+  return 'linear-gradient(135deg, hsl(' + h + ',50%,28%), hsl(' + ((h+40)%360) + ',55%,45%))';
+}
+
+function buildMenuHTML(b, bi){
+  let html = '';
+  b.menu.forEach((item, idx)=>{
+    const isActive = idx === activeMenu[bi];
+    if(item.feature){
+      html += '<div class="menu-item feature-btn' + (isActive?' active':'') + '" data-bi="'+bi+'" data-idx="'+idx+'">' +
+        '<div class="txt"><span class="title">XBOX <span style="color:#8ee23a">LIVE</span></span></div></div>';
+    } else {
+      html += '<div class="menu-item' + (isActive?' active':'') + '" data-bi="'+bi+'" data-idx="'+idx+'">' +
+        '<div class="icon" style="background:' + iconStyle(item.title) + '">' + item.icon + '</div>' +
+        '<div class="txt"><span class="title">' + item.title + '</span>' + (item.sub ? '<span class="sub">'+item.sub+'</span>' : '') + '</div>' +
+      '</div>';
+    }
+  });
+  if(b.id === 'media'){
+    html += '<div class="now-playing"><div class="thumb">🎵</div><div class="info">' +
+      '<div class="t1">3 Doors Down — Landing in London</div><div class="t2">1:45</div>' +
+      '<div class="bar"><i></i></div></div></div>' +
+      '<div class="play-line">Play: Project Gotham Racing 3</div>';
+  }
+  return html;
+}
+
+function buildDetailHTML(b, bi){
+  const item = b.menu[activeMenu[bi]];
+  if(b.detailType === 'live-banner'){
+    return '<div class="promo-box dim"><span class="live-logo" style="font-size:1.2rem;"><span class="x1">XBOX</span><span class="x2">LIVE</span></span></div>' +
+      '<div class="promo-box hot"><span class="live-logo" style="font-size:1.4rem;"><span class="x1">XBOX</span><span class="x2">LIVE</span></span></div>';
+  }
+  if(b.detailType === 'live-info'){
+    return '<div class="live-logo"><span class="x1">XBOX</span><span class="x2">LIVE</span></div>' +
+      '<div class="detail-body">' + b.detailText + '</div>';
+  }
+  if(b.detailType === 'game'){
+    return '<div class="detail-media" style="background:' + iconStyle(item.title) + '">' + item.icon + '</div>' +
+      '<div class="detail-title">' + item.detailTitle + '</div>' +
+      '<div class="detail-body">' + item.detailText + '</div>' +
+      '<div class="detail-extra"><div class="badge-teen"><span>ESRB</span><span class="big">T</span></div>' +
+      '<div class="content-icon">💿 Available Content</div></div>';
+  }
+  if(b.detailType === 'media'){
+    const songs = [
+      {t:'Seventeen Days', a:'3 Doors Down'},
+      {t:'Another 700 Miles', a:'3 Doors Down'},
+      {t:'Away from the Sun', a:'3 Doors Down'},
+    ];
+    let s = '<div class="detail-title">' + item.title + '</div>';
+    songs.forEach(function(sg){
+      s += '<div class="song-row"><div class="thumb">🎵</div><div class="meta"><div class="t1">'+sg.t+'</div><div class="t2">'+sg.a+'</div></div></div>';
+    });
+    return s;
+  }
+  if(b.detailType === 'system'){
+    return '<div class="detail-title">Edit your Xbox 360 system settings, including:</div>' +
+      '<div class="detail-body">• Display<br>• Audio<br>• Language<br>• Remote control<br>• and more</div>';
+  }
+  return '';
+}
+
+function buildFooterHTML(b){
+  let left = '<div class="hint-group">';
+  b.footer.left.forEach(function(h){
+    left += '<div class="hint">' + (h.btn ? '<span class="btn-badge btn-'+h.btn.toLowerCase()+'">'+h.btn+'</span>' : '<span>'+h.icon+'</span>') + (h.text ? '<span>'+h.text+'</span>' : '') + '</div>';
+  });
+  left += '</div>';
+  let right = '<div class="hint-group">';
+  b.footer.right.forEach(function(h){
+    right += '<div class="hint"><span class="btn-badge btn-'+h.btn.toLowerCase()+'">'+h.btn+'</span>' + (h.text ? '<span>'+h.text+'</span>' : '') + '</div>';
+  });
+  right += '</div>';
+  return left + right;
+}
+
+function buildHeaderRightHTML(b){
+  if(b.id === 'live'){
+    return '<div class="live-logo-big"><span class="x1">XBOX</span><span class="x2">LIVE</span></div>';
+  }
+  return '<div class="console-badge"><span class="orb"></span><span class="label">XBOX <b>360</b></span></div>';
+}
+
+function buildPage(b, bi){
+  const page = document.createElement('div');
+  page.className = 'page';
+  page.style.setProperty('--c1', b.c1);
+  page.style.setProperty('--c2', b.c2);
+  page.dataset.bi = bi;
+  page.innerHTML =
+    '<div class="bg"></div>' +
+    '<div class="folds"><div class="fold f1"></div><div class="fold f2"></div><div class="fold f3"></div></div>' +
+    '<div class="sheen"></div>' +
+    '<div class="vignette"></div>' +
+    '<div class="content">' +
+      '<div class="page-header"><div class="page-title">' + b.title + '</div>' + buildHeaderRightHTML(b) + '</div>' +
+      '<div class="body-row">' +
+        '<div class="menu-col" data-bi="'+bi+'">' + buildMenuHTML(b, bi) + '</div>' +
+        '<div class="detail-col" data-bi="'+bi+'">' + buildDetailHTML(b, bi) + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="page-footer">' + buildFooterHTML(b) + '</div>';
+
+  page.querySelector('.menu-col').addEventListener('click', function(e){
+    const item = e.target.closest('.menu-item');
+    if(!item) return;
+    const idx = parseInt(item.dataset.idx, 10);
+    activeMenu[bi] = idx;
+    refreshPage(bi);
+  });
+
+  return page;
+}
+
+function refreshPage(bi){
+  const b = BLADES[bi];
+  const page = track.children[bi];
+  page.querySelector('.menu-col').innerHTML = buildMenuHTML(b, bi);
+  page.querySelector('.detail-col').innerHTML = buildDetailHTML(b, bi);
+}
+
+/* ---- Side tabs (vertical blade names on chrome frame) ---- */
+function renderSideTabs(){
+  // Remove existing tabs
+  document.querySelectorAll('.side-tab').forEach(el => el.remove());
+
+  BLADES.forEach((b, i) => {
+    const tab = document.createElement('div');
+    tab.className = 'side-tab ' + (i < activeBlade ? 'left' : 'right') + (i === activeBlade ? ' active' : '');
+    tab.textContent = b.label;
+    tab.addEventListener('click', () => goToBlade(i));
+    viewport.appendChild(tab);
+  });
+}
+
+function goToBlade(i){
+  activeBlade = Math.max(0, Math.min(BLADES.length - 1, i));
+  track.style.transform = 'translateX(-' + (activeBlade * 87) + 'vw)';
+  renderSideTabs();
+  // Update active states on all pages
+  BLADES.forEach((b, bi) => refreshPage(bi));
+}
+
+BLADES.forEach(function(b, i){
+  track.appendChild(buildPage(b, i));
+});
+track.style.width = (BLADES.length * 87) + 'vw';
+track.style.transform = 'translateX(-' + (activeBlade * 87) + 'vw)';
+
+renderSideTabs();
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e){
+  if(e.key === 'ArrowLeft'){ goToBlade(activeBlade - 1); }
+  else if(e.key === 'ArrowRight'){ goToBlade(activeBlade + 1); }
+  else if(e.key === 'ArrowUp'){
+    const b = BLADES[activeBlade];
+    activeMenu[activeBlade] = Math.max(0, activeMenu[activeBlade] - 1);
+    refreshPage(activeBlade);
+  } else if(e.key === 'ArrowDown'){
+    const b = BLADES[activeBlade];
+    activeMenu[activeBlade] = Math.min(b.menu.length - 1, activeMenu[activeBlade] + 1);
+    refreshPage(activeBlade);
+  }
+});
+</script>
+</body>
+</html>

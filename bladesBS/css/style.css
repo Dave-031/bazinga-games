@@ -1,0 +1,116 @@
+* {
+  font-family: Convection Medium, Segoe UI, SegoeUI, "Helvetica Neue", Helvetica,
+    Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background: linear-gradient(to left, #ddd, #b0b0b0);
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  color: #fff;
+  font-weight: 100;
+}
+
+.img-box img {
+  width: 100%;
+}
+
+.dashboard {
+  height: 100vh;
+  width: 85vw;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+/* Slider  */
+.slider-wrapper {
+  display: flex;
+  overflow: scroll;
+  scroll-behavior: smooth;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 0%;
+  animation: expand-width 2.5s forwards;
+}
+
+@keyframes expand-width {
+  from {
+    width: 10%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Slides */
+.slide {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  flex: 1 0 100%;
+  min-width: 70vw;
+  padding: 30px;
+}
+
+#marketplace-slide {
+  background: radial-gradient(farthest-side, #ff8431, #fea636, #ff6136);
+}
+
+#xboxlive-slide {
+  background: radial-gradient(farthest-side, #ffb737, #ffd145, #ff9b29);
+}
+
+#games-slide {
+  background: radial-gradient(farthest-side, #48a83e, #60f044, #2f9a21);
+}
+
+#media-slide {
+  background: radial-gradient(farthest-side, #40a3ff, #60baff, #2881ff);
+}
+
+#system-slide {
+  background: radial-gradient(farthest-side, #a28dff, #b0a4f2, #7a6ade);
+}
+
+/* Slider buttons */
+.left-slider-buttons {
+  display: flex;
+}
+
+.right-slider-buttons {
+  display: flex;
+}
+
+.slider-button {
+  font-size: 3em;
+  letter-spacing: 0.2rem;
+  color: #393939;
+  display: flex;
+  justify-content: center;
+  width: 5rem;
+  height: 100vh;
+  padding-top: 175px;
+  border-radius: 0;
+}
+
+.button-label {
+  display: inline-block;
+  transform: rotate(90deg);
+  width: 0;
+  height: 0;
+  line-height: 0;
+  white-space: nowrap;
+}
