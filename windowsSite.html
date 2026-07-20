@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Game Station - Interactive Multi-Window Hub</title>
-    <script async src="https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games@main/gamelogic.js"></script>
     <link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@32af2b5554172ed0694716e07d049b8de7c623f2/themes/7_theme.css">
     <link rel="icon" type="image/x-icon" href="https://64.media.tumblr.com/338b84acf3491001241d1cadf54a99c1/742a58dac3bc91cf-79/s75x75_c1/db3914648ceb52508cfaadc2b6d0dedcc1bbedd1.gifv">
     <style>
@@ -290,13 +289,233 @@
         <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
       </div>
       <div class="full-content" style="padding: 15px;">
-        <div class="widget-header">
-          <h1 class="widget-title">Bazinga Games <span id="games-ver" class="widget-version" style="font-size:1rem; margin-left:10px;">...</span>
-          </h1>
-          <input id="game-search" class="widget-search" type="text" placeholder="Search games…">
-        </div>
-        <div id="game-grid" class="widget-grid"></div>
-        <div id="game-empty" style="display:none; text-align:center; color:#888;">No games found</div>
+        <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: Poppins, sans-serif;
+  background: #000;
+  color: #f5f5f5;
+  overflow-x: hidden;
+}
+
+/* ===== Loader ===== */
+#widget-global-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  color: #fff;
+}
+.widget-spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: 0.8s linear infinite widget-spin;
+  margin-bottom: 20px;
+}
+@keyframes widget-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== Games view ===== */
+
+.widget-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.widget-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #fff, #aaa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.widget-version {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.widget-search {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 1.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  outline: 0;
+  display: block;
+}
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+.widget-card {
+  background: transparent !important;
+  border-radius: 15px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  display: block;
+  transition: transform 0.3s;
+}
+.widget-card:hover {
+  transform: translateY(-5px);
+  border: 1px solid #948d8d;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
+    0 0 20px rgba(255, 255, 255, 0.4);
+}
+.widget-img {
+  background: transparent !important;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+}
+.widget-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.75rem 0.5rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0) 90%);
+  pointer-events: none;
+}
+.widget-name {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-shadow: 
+    -1px -1px 0 #000,  
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
+}
+#game-empty {
+  display: none;
+  text-align: center;
+  color: #888;
+}
+</style>
+  </head>
+  <body>
+    <div id="widget-global-loader">
+      <div class="widget-spinner"></div>
+      <div id="loader-msg">Fetching Latest Game Data...</div>
+    </div>
+    <div id="view-games">
+      <div class="widget-header">
+        <h1 class="widget-title">Bazinga Games <span id="games-ver" class="widget-version" style="font-size:1rem; margin-left:10px;">...</span></h1>
+        <input id="game-search" class="widget-search" type="text" placeholder="Search games…">
+      </div>
+      <div id="game-grid" class="widget-grid"></div>
+      <div id="game-empty">No games found</div>
+    </div>
+<script>
+  const ts = () => Date.now();
+
+  async function fetchVersion() {
+    try {
+      const vRes = await fetch(`https://gist.githubusercontent.com/Dave-031/28e04705e41bba73ce058f9f8b4ae75f/raw/version.json?t=${ts()}`);
+      const vData = await vRes.json();
+      document.getElementById('games-ver').textContent = `Version: ${vData.version}`;
+    } catch (e) { console.error("Version fetch failed", e); }
+  }
+
+  /* ===== GAMES LOGIC ===== */
+  const imageObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        if (!img.src) {
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+        }
+        observer.unobserve(img);
+      }
+    });
+  }, { rootMargin: '150px' });
+
+  let gameData = [];
+  async function initGames() {
+    const grid = document.getElementById('game-grid');
+    const empty = document.getElementById('game-empty');
+    const ZONES_URL = 'https://gist.githubusercontent.com/Dave-031/bb96a99fc2db2f13aa07d14802015431/raw/zones.json';
+    const COVER_URL = 'https://cdn.jsdelivr.net/gh/Dave-031/covers@latest/';
+
+    try {
+      const res = await fetch(`${ZONES_URL}?t=${ts()}`);
+      gameData = await res.json();
+      renderGames(gameData);
+    } catch (e) { console.error(e); }
+
+    function renderGames(arr) {
+      grid.innerHTML = '';
+      empty.style.display = arr.length ? 'none' : 'block';
+      arr.forEach(z => {
+        const card = document.createElement('div');
+        card.className = 'widget-card';
+        const cover = z.cover ? (z.cover.includes('{COVER_URL}') ? z.cover.replace('{COVER_URL}', COVER_URL) : z.cover) : '';
+        card.innerHTML = `<img class="widget-img lazy-img" data-src="${cover}"><div class="widget-info"><div class="widget-name">${z.name}</div></div>`;
+        card.onclick = () => launchGame(z);
+        grid.appendChild(card);
+        imageObserver.observe(card.querySelector('.lazy-img'));
+      });
+    }
+
+    async function launchGame(z) {
+      const loader = document.getElementById('widget-global-loader');
+      loader.style.display = 'flex';
+      try {
+        const freshRes = await fetch(`${ZONES_URL}?t=${ts()}`);
+        const freshData = await freshRes.json();
+        const current = freshData.find(item => item.name === z.name);
+        const commit = (current && current.LatestCommitID) ? current.LatestCommitID : 'main';
+        const finalUrl = `https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games@${commit}/single-html/${encodeURIComponent(z.name.trim())}.html`;
+        const gameReq = await fetch(finalUrl);
+        const html = await gameReq.text();
+        const t = window.open('about:blank', '_blank');
+        t.document.write(html);
+        t.document.close();
+      } catch (e) { alert('Failed to load.'); }
+      loader.style.display = 'none';
+    }
+
+    document.getElementById('game-search').oninput = (e) => {
+      const term = e.target.value.toLowerCase();
+      renderGames(gameData.filter(g => g.name.toLowerCase().includes(term)));
+    };
+  }
+
+  /* ===== STARTUP ===== */
+  window.onload = () => {
+    fetchVersion();
+    initGames();
+  };
+</script>
+  </body>
+</html>
       </div>
     </div>
   </div>
