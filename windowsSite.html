@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Game Station - Interactive Multi-Window Hub</title>
+    <script async src="https://cdn.jsdelivr.net/gh/Dave-031/bazinga-games@main/gamelogic.js"></script>
     <link id="theme-stylesheet" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Dave-031/Newdemo@32af2b5554172ed0694716e07d049b8de7c623f2/themes/7_theme.css">
     <link rel="icon" type="image/x-icon" href="https://64.media.tumblr.com/338b84acf3491001241d1cadf54a99c1/742a58dac3bc91cf-79/s75x75_c1/db3914648ceb52508cfaadc2b6d0dedcc1bbedd1.gifv">
     <style>
@@ -289,13 +290,13 @@
         <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
       </div>
       <div class="full-content" style="padding: 15px;">
-        <h1>Arcade & Retro Directory</h1>
-        <p>Choose your software platform variant:</p>
-        <ul>
-            <li>Action-Adventure RPG v2.1</li>
-            <li>Side-Scrolling Platformer Engine</li>
-            <li>Classic 8-Bit Space Shooters</li>
-        </ul>
+        <div class="widget-header">
+          <h1 class="widget-title">Bazinga Games <span id="games-ver" class="widget-version" style="font-size:1rem; margin-left:10px;">...</span>
+          </h1>
+          <input id="game-search" class="widget-search" type="text" placeholder="Search games…">
+        </div>
+        <div id="game-grid" class="widget-grid"></div>
+        <div id="game-empty" style="display:none; text-align:center; color:#888;">No games found</div>
       </div>
     </div>
   </div>
