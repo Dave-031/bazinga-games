@@ -273,7 +273,36 @@
     </style>
 </head>
 <body>
-
+  <!-- this is just some code for a pc games im working on  -->
+  <!-- errors rn breaks taskbar and wont maximise -->
+  <!--
+  <div class="window glass active" id="win-pc-games">
+    <div class="title-bar">
+      <div class="title-bar-text"><span class="win-icon icon-games"></span>PC GAMES</div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" class="btn-minimize"></button>
+        <button aria-label="Maximize" class="btn-maximize"></button>
+        <button aria-label="Close" class="btn-close"></button>
+      </div>
+    </div>
+    <div class="window-body has-space">
+      <div class="preview-content" style="text-align: center; padding: 20px 15px;">
+        <h1 style="font-size: 26px; margin: 0 0 12px 0; font-weight: bold; color: #000; letter-spacing: 0.5px;">GAMES</h1>
+        <p style="font-size: 14px; color: #222; margin: 0; line-height: 1.4; font-weight: 500;">Double-click the title bar or click the Maximize button [🗖] at the top right to open this window fully.</p>
+      </div>
+      <div class="full-content" style="padding: 15px;">
+        <h1>Arcade & Retro Directory</h1>
+        <p>Choose your software platform variant:</p>
+        <ul>
+            <li>Action-Adventure RPG v2.1</li>
+            <li>Side-Scrolling Platformer Engine</li>
+            <li>Classic 8-Bit Space Shooters</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+-->
+  <!-- all of the old games are here and the images are streched PLZ FIX -->
   <div class="window glass active" id="win-games">
     <div class="title-bar">
       <div class="title-bar-text"><span class="win-icon icon-games"></span>GAMES</div>
@@ -749,8 +778,9 @@ html {
   const reorderBtn = document.getElementById('reorder-btn');
   const themeStylesheet = document.getElementById('theme-stylesheet');
   let highestZ = 10;
-  
+  //i added pc games here but thats all ive done
   function getIconClass(windowId) {
+    if (windowId === 'win-pc-games') return 'icon-games';
     if (windowId === 'win-games') return 'icon-games';
     if (windowId === 'win-settings') return 'icon-settings';
     if (windowId === 'win-reports') return 'icon-reports';
